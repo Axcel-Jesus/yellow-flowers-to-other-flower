@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Flores Amarillas by myeya2🌻</title>
+<style>
+* { box-sizing: border-box; }
+html, body { overflow-x: hidden; }
+:root {
+    --verde: #6b8e23;
+    --verde-claro: #8fbf5a;
+    --texto: #5c7a2c;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: clamp(10px, 4vw, 40px);
+    background: linear-gradient(135deg, #fdf6e3, #f8e7c9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+/* ================== ESCENA ================== */
+.escena {
+    position: relative;
+    width: min(500px, 100%);
+    height: min(680px, calc(100dvh - 20px));
+    min-height: 460px;
+    max-width: 100%;
+}
+.fondo {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: visible; /* deja que las flores laterales y las que caen se salgan del recuadro */
+    pointer-events: none;
+}
+.girasol {
+    position: fixed;
+    top: -60px;
+    z-index: 0;
+    animation: caer linear infinite;
+    opacity: .55;
+}
+@keyframes caer {
+    0%   { transform: translateY(-100px) rotate(0deg); }
+    100% { transform: translateY(110vh) rotate(360deg); }
+}
+.container {
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    border-radius: clamp(16px, 4vw, 25px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+}
+.decor-flor {
+    position: absolute;
+    width: clamp(100px, 28vw, 180px);
+    z-index: 5;
+    pointer-events: none;
+}
+.flor1 { top: -60px; left: -60px; }
+.flor2 { bottom: -60px; right: -60px; }
+
+/* ================== PLANTAS ==================
+   El tallo se difumina a transparente en su base con
+   mask-image, así el corte no se nota como una línea recta
+   (sin necesidad de recortar el contenedor, que taparía las
+   flores laterales y las que caen). */
+.planta-lateral {
+    position: absolute;
+    bottom: -6%;
+    width: clamp(78px, 13vw, 125px);
+    height: clamp(300px, 58vh, 520px);
+    transform-origin: 50% 100%;
+    opacity: 0;
+    animation-name: aparecer-planta, viento, crecer;
+    animation-duration: .5s, 4.2s, 1.4s;
+    animation-timing-function: ease-out, ease-in-out, cubic-bezier(.22, .85, .3, 1);
+    animation-iteration-count: 1, infinite, 1;
+    animation-fill-mode: both, both, both;
+    animation-delay: var(--crecer-delay, 0s), var(--viento-delay, 0s), var(--crecer-delay, 0s);
+}
+@keyframes aparecer-planta {
+    to { opacity: 1; }
+}
+.planta-izquierda { left: clamp(-58px, -5vw, -24px); --inclinacion: -16deg; }
+.planta-derecha   { right: clamp(-58px, -5vw, -24px); --inclinacion: 16deg; --viento-delay: -2.1s; --crecer-delay: .25s; }
+
+.planta-pequena { width: clamp(58px, 10vw, 88px); height: clamp(220px, 42vh, 360px); }
+.planta-mediana { width: clamp(68px, 11vw, 105px); height: clamp(260px, 49vh, 430px); }
+
+.planta-izquierda.planta-pequena { left: clamp(-34px, -2vw, -12px); bottom: -4%; --inclinacion: -28deg; --viento-delay: -1.4s; --crecer-delay: .55s; }
+.planta-derecha.planta-pequena   { right: clamp(-34px, -2vw, -12px); bottom: -4%; --inclinacion: 28deg;  --viento-delay: -3.5s; --crecer-delay: .7s; }
+.planta-izquierda.planta-mediana { left: clamp(-50px, -3vw, -20px); bottom: -5%; --inclinacion: -22deg; --viento-delay: -2.4s; --crecer-delay: .4s; }
+.planta-derecha.planta-mediana   { right: clamp(-50px, -3vw, -20px); bottom: -5%; --inclinacion: 22deg;  --viento-delay: -.8s;  --crecer-delay: .15s; }
+
+.tallo {
+    position: absolute;
+    bottom: -12%; /* se hunde bajo el recorte, así la base nunca se ve */
+    left: 50%;
+    width: clamp(4px, .7vw, 7px);
+    height: 90%;
+    background: linear-gradient(90deg, #52751b, #86a936, #476718);
+    border-radius: 100% 100% 0 0;
+    transform: translateX(-50%);
+    transform-origin: 50% 100%;
+    -webkit-mask-image: linear-gradient(to top, transparent 0, black 14%);
+    mask-image: linear-gradient(to top, transparent 0, black 14%);
+}
+.flor-cabeza {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: clamp(48px, 9vw, 78px);
+    aspect-ratio: 1;
+    filter: drop-shadow(0 5px 4px rgba(107, 88, 20, .2));
+    transform: translateX(-50%);
+    transform-origin: 50% 95%;
+    animation: flor-viento 4.2s ease-in-out infinite;
+}
+.petalos, .petalo, .centro-flor { position: absolute; }
+.petalos { inset: 0; z-index: 1; }
+.petalo {
+    left: 50%;
+    bottom: 50%;
+    width: 34%;
+    height: 58%;
+    border-radius: 50% 50% 42% 42%;
+    background: linear-gradient(135deg, #ffe86a, #e5a900);
+    box-shadow: 0 2px 4px rgba(150, 102, 0, .2);
+    transform-origin: 50% 100%;
+    transform: translate(-50%, 18px) rotate(var(--angulo)) scale(.05);
+    opacity: 0;
+    animation: petalo-crecer .9s cubic-bezier(.25, 1.6, .35, 1) both;
+    animation-delay: calc(var(--petalo-delay, 1.1s) + var(--orden, 0s));
+}
+.petalo-1 { --angulo: 0deg; }
+.petalo-2 { --angulo: 45deg; }
+.petalo-3 { --angulo: 90deg; }
+.petalo-4 { --angulo: 135deg; }
+.petalo-5 { --angulo: 180deg; }
+.petalo-6 { --angulo: 225deg; }
+.petalo-7 { --angulo: 270deg; }
+.petalo-8 { --angulo: 315deg; }
+.centro-flor {
+    left: 50%;
+    top: 50%;
+    z-index: 4;
+    width: 31%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #8b5a14, #4b2b0b 75%);
+    box-shadow: inset 0 0 0 2px rgba(255, 210, 62, .45), 0 2px 4px rgba(73, 43, 9, .3);
+    transform: translate(-50%, calc(-50% + 18px)) scale(.05);
+    opacity: 0;
+    animation: centro-crecer .7s cubic-bezier(.25, 1.6, .35, 1) 1.6s both;
+}
+.flor-cabeza::before, .flor-cabeza::after {
+    content: "";
+    position: absolute;
+    bottom: 3%;
+    z-index: 3;
+    width: 24px;
+    height: 13px;
+    background: linear-gradient(135deg, #a8c94b, #527b20);
+    border-radius: 100% 0 100% 0;
+    transform-origin: 0 50%;
+    animation: hojas-cabeza 3.4s ease-in-out infinite;
+}
+.flor-cabeza::before { left: 48%; transform: rotate(205deg); }
+.flor-cabeza::after { left: 52%; transform: rotate(-25deg) scaleX(-1); animation-delay: -1s; }
+@keyframes hojas-cabeza { 0%, 100% { rotate: -2deg; } 50% { rotate: 5deg; } }
+@keyframes petalo-crecer {
+    0%   { opacity: 0; transform: translate(-50%, 18px) rotate(var(--angulo)) scale(.05); }
+    70%  { opacity: 1; transform: translate(-50%, -4px) rotate(var(--angulo)) scale(1.08); }
+    100% { opacity: 1; transform: translate(-50%, 0) rotate(var(--angulo)) scale(1); }
+}
+@keyframes centro-crecer {
+    0%   { opacity: 0; transform: translate(-50%, calc(-50% + 18px)) scale(.05); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+.hoja {
+    position: absolute;
+    z-index: 1;
+    width: clamp(32px, 6vw, 58px);
+    height: clamp(14px, 3vw, 25px);
+    background: linear-gradient(135deg, #98bb43, #47731d);
+    border-radius: 100% 0 100% 0;
+    transform-origin: 0 50%;
+    animation: hojas-viento 3.6s ease-in-out infinite;
+}
+.hoja-izquierda { left: 50%; bottom: 39%; transform: rotate(205deg); }
+.hoja-derecha { left: 50%; bottom: 53%; transform: rotate(-24deg) scaleX(-1); animation-delay: -1.2s; }
+.hoja-baja { left: 50%; bottom: 23%; transform: rotate(197deg) scale(.82); animation-delay: -.7s; }
+@keyframes viento {
+    0%, 100% { transform: rotate(calc(var(--inclinacion) - 3deg)) translateX(0); }
+    50%      { transform: rotate(calc(var(--inclinacion) + 3deg)) translateX(8px); }
+}
+@keyframes crecer {
+    0%   { clip-path: inset(100% 0 0 0); }
+    100% { clip-path: inset(0 0 0 0); }
+}
+@keyframes flor-viento {
+    0%, 100% { transform: translateX(-50%) rotate(-4deg); }
+    50%      { transform: translateX(-50%) rotate(8deg); }
+}
+@keyframes hojas-viento {
+    0%, 100% { filter: brightness(.95); }
+    50%      { filter: brightness(1.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; }
+}
+
+/* ================== SLIDES ================== */
+.slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: clamp(8px, 2vh, 18px);
+    padding: clamp(20px, 5vw, 42px) clamp(16px, 5vw, 32px) 86px;
+    overflow-y: auto;
+    text-align: center;
+}
+.slide.active { display: flex; }
+
+h1 {
+    margin: 0;
+    color: var(--verde);
+    font-size: clamp(26px, 8vw, 42px);
+    line-height: 1.1;
+    text-align: center;
+}
+.slide p {
+    max-width: 100%;
+    margin: 0;
+    text-align: center;
+    color: var(--texto);
+    font-size: clamp(15px, 4vw, 18px);
+    line-height: 1.45;
+}
+.slide img {
+    display: block;
+    width: min(460px, 90%);
+    max-height: min(40vh, 320px);
+    object-fit: contain;
+    margin: 0 auto;
+}
+.botones {
+    position: absolute;
+    bottom: clamp(14px, 3vw, 24px);
+    left: 0;
+    width: 100%;
+    padding: 0 16px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.botones button {
+    min-height: 42px;
+    background: var(--verde-claro);
+    color: white;
+    border: none;
+    padding: 10px clamp(14px, 4vw, 18px);
+    border-radius: 25px;
+    font-size: clamp(13px, 3.5vw, 14px);
+    cursor: pointer;
+    animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+.carta-slide { justify-content: center; align-items: center; overflow-y: auto; padding-top: 24px; }
+.hoja-carta {
+    width: min(100%, 380px);
+    height: clamp(300px, 66vh, 480px);
+    max-height: calc(100% - 20px);
+    background: #fffef8;
+    padding: clamp(18px, 5vw, 30px) clamp(14px, 4vw, 25px);
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    font-size: clamp(14px, 3.8vw, 18px);
+    line-height: 1.6;
+    color: #222;
+    text-align: justify;
+}
+.fecha { text-align: right; margin-bottom: 20px; }
+.destinatario { margin-bottom: 15px; text-align: left; }
+.hoja-carta p { margin-bottom: 16px; }
+.despedida { margin-top: 20px; }
+.firma { margin-top: 5px; }
+
+/* ================== RESPONSIVE MÓVIL ================== */
+@media (max-width: 768px) {
+    body { padding: 8px; align-items: center; }
+    .escena {
+        width: 100%;
+        height: min(680px, calc(100dvh - 16px));
+        min-height: 420px;
+    }
+    .container { border-radius: 18px; }
+    .planta-lateral { width: clamp(52px, 15vw, 90px); height: clamp(190px, 44vh, 360px); }
+    .planta-pequena { width: clamp(40px, 11vw, 66px); height: clamp(140px, 32vh, 260px); }
+    .planta-mediana { width: clamp(46px, 13vw, 76px); height: clamp(165px, 38vh, 310px); }
+    .planta-izquierda.planta-pequena { left: clamp(-26px, -3vw, -10px); }
+    .planta-derecha.planta-pequena { right: clamp(-26px, -3vw, -10px); }
+    .planta-izquierda.planta-mediana { left: clamp(-36px, -4vw, -14px); }
+    .planta-derecha.planta-mediana { right: clamp(-36px, -4vw, -14px); }
+    .flor-cabeza { width: clamp(34px, 9vw, 56px); }
+    .hoja { width: clamp(22px, 6vw, 38px); height: clamp(10px, 3vw, 17px); }
+    .decor-flor { width: clamp(80px, 24vw, 130px); }
+    .flor1 { top: -40px; left: -40px; }
+    .flor2 { bottom: -40px; right: -40px; }
+    .slide { padding: 18px 12px 84px; }
+    .slide img { max-height: min(32vh, 240px); }
+    .hoja-carta {
+        width: min(100%, 340px);
+        height: clamp(260px, 62vh, 420px);
+        max-height: calc(100% - 20px);
+        padding: 18px 14px;
+        font-size: clamp(13px, 3.8vw, 16px);
+        line-height: 1.5;
+    }
+}
+@media (max-width: 420px) {
+    body { padding: 6px; }
+    .escena { height: calc(100dvh - 12px); min-height: 0; }
+    .container { min-height: 0; }
+}
+@media (max-height: 620px) {
+    .escena { height: calc(100dvh - 12px); min-height: 0; }
+    .slide { padding-top: 16px; }
+    .slide img { max-height: 26vh; }
+}
+</style>
+</head>
+<body>
+<div class="escena">
+<div class="fondo" id="fondo">
+    <div class="planta-lateral planta-izquierda" aria-hidden="true">
+        <span class="tallo"></span>
+        <span class="hoja hoja-izquierda"></span>
+        <span class="hoja hoja-derecha"></span>
+        <span class="hoja hoja-baja"></span>
+        <span class="flor-cabeza">
+            <span class="petalos">
+                <span class="petalo petalo-1"></span><span class="petalo petalo-2"></span>
+                <span class="petalo petalo-3"></span><span class="petalo petalo-4"></span>
+                <span class="petalo petalo-5"></span><span class="petalo petalo-6"></span>
+                <span class="petalo petalo-7"></span><span class="petalo petalo-8"></span>
+            </span>
+            <span class="centro-flor"></span>
+        </span>
+    </div>
+    <div class="planta-lateral planta-derecha" aria-hidden="true">
+        <span class="tallo"></span>
+        <span class="hoja hoja-izquierda"></span>
+        <span class="hoja hoja-derecha"></span>
+        <span class="hoja hoja-baja"></span>
+        <span class="flor-cabeza">
+            <span class="petalos">
+                <span class="petalo petalo-1"></span><span class="petalo petalo-2"></span>
+                <span class="petalo petalo-3"></span><span class="petalo petalo-4"></span>
+                <span class="petalo petalo-5"></span><span class="petalo petalo-6"></span>
+                <span class="petalo petalo-7"></span><span class="petalo petalo-8"></span>
+            </span>
+            <span class="centro-flor"></span>
+        </span>
+    </div>
+    <div class="planta-lateral planta-pequena planta-izquierda" aria-hidden="true">
+        <span class="tallo"></span>
+        <span class="hoja hoja-izquierda"></span>
+        <span class="hoja hoja-derecha"></span>
+        <span class="flor-cabeza">
+            <span class="petalos">
+                <span class="petalo petalo-1"></span><span class="petalo petalo-2"></span>
+                <span class="petalo petalo-3"></span><span class="petalo petalo-4"></span>
+                <span class="petalo petalo-5"></span><span class="petalo petalo-6"></span>
+                <span class="petalo petalo-7"></span><span class="petalo petalo-8"></span>
+            </span>
+            <span class="centro-flor"></span>
+        </span>
+    </div>
+    <div class="planta-lateral planta-pequena planta-derecha" aria-hidden="true">
+        <span class="tallo"></span>
+        <span class="hoja hoja-izquierda"></span>
+        <span class="hoja hoja-derecha"></span>
+        <span class="flor-cabeza">
+            <span class="petalos">
+                <span class="petalo petalo-1"></span><span class="petalo petalo-2"></span>
+                <span class="petalo petalo-3"></span><span class="petalo petalo-4"></span>
+                <span class="petalo petalo-5"></span><span class="petalo petalo-6"></span>
+                <span class="petalo petalo-7"></span><span class="petalo petalo-8"></span>
+            </span>
+            <span class="centro-flor"></span>
+        </span>
+    </div>
+    <div class="planta-lateral planta-mediana planta-izquierda" aria-hidden="true">
+        <span class="tallo"></span>
+        <span class="hoja hoja-izquierda"></span>
+        <span class="hoja hoja-derecha"></span>
+        <span class="hoja hoja-baja"></span>
+        <span class="flor-cabeza">
+            <span class="petalos">
+                <span class="petalo petalo-1"></span><span class="petalo petalo-2"></span>
+                <span class="petalo petalo-3"></span><span class="petalo petalo-4"></span>
+                <span class="petalo petalo-5"></span><span class="petalo petalo-6"></span>
+                <span class="petalo petalo-7"></span><span class="petalo petalo-8"></span>
+            </span>
+            <span class="centro-flor"></span>
+        </span>
+    </div>
+    <div class="planta-lateral planta-mediana planta-derecha" aria-hidden="true">
+        <span class="tallo"></span>
+        <span class="hoja hoja-izquierda"></span>
+        <span class="hoja hoja-derecha"></span>
+        <span class="hoja hoja-baja"></span>
+        <span class="flor-cabeza">
+            <span class="petalos">
+                <span class="petalo petalo-1"></span><span class="petalo petalo-2"></span>
+                <span class="petalo petalo-3"></span><span class="petalo petalo-4"></span>
+                <span class="petalo petalo-5"></span><span class="petalo petalo-6"></span>
+                <span class="petalo petalo-7"></span><span class="petalo petalo-8"></span>
+            </span>
+            <span class="centro-flor"></span>
+        </span>
+    </div>
+</div>
+<div class="container">
+<div class="slide active">
+    <h1>Para Angie 💛</h1>
+    <p>Un pequeño detalle para ti...</p>
+    <img src="imagen_2026-09-21_111311762-Photoroom.png" alt="">
+    <div class="botones">
+        <button onclick="nextSlide()">Siguiente ➜</button>
+    </div>
+</div>
+<div class="slide">
+    <p>Cada flor es un pequeño recordatorio<br>de lo especial que eres 💖</p>
+    <img src="imagen_2026-09-21_111521268-Photoroom.png" alt="">
+    <div class="botones">
+        <button onclick="prevSlide()">←</button>
+        <button onclick="nextSlide()">→</button>
+    </div>
+</div>
+<div class="slide">
+    <p>Tengo una sorpresa más para ti ✨</p>
+    <img src="imagen_2026-09-21_112048537.png" alt="">
+    <div class="botones">
+        <button onclick="prevSlide()">←</button>
+        <button onclick="goTo(3)">Abrir carta 💌</button>
+    </div>
+</div>
+<div class="slide carta-slide">
+    <div class="hoja-carta">
+        <div class="fecha">21 de septiembre 🌻</div>
+        <p class="destinatario"><strong>Querida princesa Angie</strong></p>
+        <p>Los momentos más bonitos no siempre son los más grandes. A veces son las risas inesperadas, las conversaciones largas que parecen no tener fin, los pequeños detalles que casi nadie nota o simplemente el hecho de compartir tiempo juntos sin necesidad de hacer nada especial.</p>
+        <p>Me he dado cuenta de que son precisamente esos instantes sencillos los que más se quedan en el corazón, los que uno recuerda incluso cuando todo cambia. Porque no se trata de lo que se hace, sino de con quién se vive.</p>
+        <p>Cada recuerdo contigo se guarda como algo especial, como si tuviera un brillo distinto. Y sinceramente, espero que todavía nos queden muchísimos momentos más por vivir, más historias que contar y más recuerdos que atesorar con el tiempo.</p>
+        <p>Porque al final, lo más valioso siempre será eso: los momentos compartidos, las emociones sinceras y todo aquello que, sin darnos cuenta, va construyendo algo bonito entre nosotros.</p>
+        <p class="despedida">Con cariño,</p>
+        <p class="firma"><strong>Axcel 💛</strong></p>
+    </div>
+    <div class="botones">
+        <button onclick="goTo(0)">🏠 Inicio</button>
+        <button onclick="prevSlide()">←</button>
+    </div>
+</div>
+</div>
+</div>
+<script>
+let current = 0;
+const slides = document.querySelectorAll(".slide");
+function showSlide(index) {
+    slides[current].classList.remove("active");
+    current = index;
+    slides[current].classList.add("active");
+}
+function nextSlide() {
+    let next = current + 1;
+    if (next >= slides.length) next = 0;
+    showSlide(next);
+}
+function prevSlide() {
+    let prev = current - 1;
+    if (prev < 0) prev = slides.length - 1;
+    showSlide(prev);
+}
+function goTo(index) { showSlide(index); }
+
+const fondo = document.getElementById("fondo");
+for (let i = 0; i < 18; i++) {
+    let flor = document.createElement("img");
+    flor.src = "https://www.pngmart.com/files/4/Sunflower-PNG-HD.png";
+    flor.className = "girasol";
+    flor.style.left = Math.random() * 100 + "vw";
+    flor.style.animationDuration = (6 + Math.random() * 6) + "s";
+    flor.style.animationDelay = (-Math.random() * 8) + "s";
+    flor.style.width = (18 + Math.random() * 26) + "px";
+    fondo.appendChild(flor);
+}
+</script>
+</body>
+</html>
